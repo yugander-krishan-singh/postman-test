@@ -1,4 +1,4 @@
-package com.example.restservice;
+package com.schedule.restservice.bean;
 
 public class Greeting {
 
