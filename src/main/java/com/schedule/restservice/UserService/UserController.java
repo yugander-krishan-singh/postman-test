@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class GreetingController {
+public class UserController {
 
     @GetMapping("/user")
     public User testUser(@RequestParam(value = "userId") String userId, @RequestParam(value = "userName") String userName) {
