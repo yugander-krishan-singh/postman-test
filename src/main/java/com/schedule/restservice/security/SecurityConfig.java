@@ -38,7 +38,7 @@ public class SecurityConfig  {
     public static class TokenSecurityConfig extends WebSecurityConfigurerAdapter {
         private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
                 //new AntPathRequestMatcher("/api/**")
-                new AntPathRequestMatcher("/slot")
+                new AntPathRequestMatcher("/slots")
         );
 
         TokenAuthenticationProvider provider;
