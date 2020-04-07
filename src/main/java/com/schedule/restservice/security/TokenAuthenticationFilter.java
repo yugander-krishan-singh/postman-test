@@ -1,5 +1,6 @@
 package com.schedule.restservice.security;
 
+import com.schedule.restservice.Exception.RequestBodyException;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
 
 public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    private static final Logger LOG = Logger.getLogger(TokenAuthenticationFilter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TokenAuthenticationFilter.class.getName());
 
     private static final String BEARER = "Bearer";
     private static final String ACCESS_TOKEN = "access_token";
@@ -34,15 +35,25 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
     public Authentication attemptAuthentication(final HttpServletRequest request,
                                                 final HttpServletResponse response) {
 
-        LOG.log(Level.ALL, "Inside attemptAuthentication method of class TokenAuthenticationFilter.java");
+        LOGGER.log(Level.INFO, "Inside attemptAuthentication method of class TokenAuthenticationFilter.java");
 
-        System.out.println("Inside attemptAuthentication method of class TokenAuthenticationFilter.java \n");
+        //System.out.println("Inside attemptAuthentication method of class TokenAuthenticationFilter.java \n");
         //Optional tokenParam = Optional.ofNullable(request.getHeader(ACCESS_TOKEN));
         String token = request.getHeader(ACCESS_TOKEN);
         //token= StringUtils.removeStart(token, "Bearer").trim();
 
         Authentication requestAuthentication = new UsernamePasswordAuthenticationToken(token, token);
-        return getAuthenticationManager().authenticate(requestAuthentication);
+
+        Authentication authentication = null;
+
+        try {
+            authentication = getAuthenticationManager().authenticate(requestAuthentication);
+        }catch (Exception e) {
+            LOGGER.log(Level.INFO,"Exception caught");
+            throw new RequestBodyException.UserException("User not found. Incorrect access token");
+        }
+
+        return authentication;
     }
 
     @Override
@@ -51,6 +62,8 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
             final HttpServletResponse response,
             final FilterChain chain,
             final Authentication authResult) throws IOException, ServletException {
+
+        LOGGER.log(Level.INFO, "Inside successfulAuthentication method of class TokenAuthenticationFilter.java");
 
         SecurityContextHolder.getContext().setAuthentication(authResult);
         chain.doFilter(request, response);

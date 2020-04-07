@@ -25,6 +25,7 @@ public class User implements UserDetails {
         return password;
     }
 
+
     public String getUserName() {
         return userName;
     }

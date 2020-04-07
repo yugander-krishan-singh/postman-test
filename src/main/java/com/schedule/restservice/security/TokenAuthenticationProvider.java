@@ -1,5 +1,6 @@
 package com.schedule.restservice.security;
 
+import com.schedule.restservice.Exception.RequestBodyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
@@ -31,8 +32,14 @@ public class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticati
         LOGGER.log(Level.INFO, "Inside retrieveUser func. of TokenAuthenticationProvider class");
 
         final Object token = authentication.getCredentials();
-        return authService.findByToken(String.valueOf(token)) ;
+        UserDetails userDetails =  authService.findByToken(String.valueOf(token)) ;
 
-        //return null;
+        /*
+        if(userDetails == null) {
+            throw new RequestBodyException.UserException("Incorrect access token passed");
+        }
+        */
+
+        return userDetails;
     }
 }

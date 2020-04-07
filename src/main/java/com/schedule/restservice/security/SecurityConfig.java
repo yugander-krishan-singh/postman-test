@@ -25,14 +25,20 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.schedule.restservice.security.TokenAuthenticationProvider;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 @EnableWebSecurity
 public class SecurityConfig  {
 
+    private static final Logger LOGGER = Logger.getLogger(SecurityConfig.class.getName());
+
     @Configuration
     public static class TokenSecurityConfig extends WebSecurityConfigurerAdapter {
         private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
-                new AntPathRequestMatcher("/api/**")
+                //new AntPathRequestMatcher("/api/**")
+                new AntPathRequestMatcher("/slot")
         );
 
         TokenAuthenticationProvider provider;
@@ -49,12 +55,14 @@ public class SecurityConfig  {
         @Override
         protected void configure(final AuthenticationManagerBuilder auth) {
             //auth.
-
+            LOGGER.log(Level.INFO, "inside configure with AuthenticationManagerBuilder parameter");
             auth.authenticationProvider(provider);
         }
 
         @Override
         public void configure(final WebSecurity webSecurity) {
+
+            LOGGER.log(Level.INFO, "inside configure with WebSecurity parameter");
             webSecurity.ignoring().antMatchers("/token/**");
         }
 
@@ -66,6 +74,7 @@ public class SecurityConfig  {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
 
+            LOGGER.log(Level.INFO, "inside configure with HttpSecurity parameter");
         /*
 
         http
@@ -88,7 +97,7 @@ public class SecurityConfig  {
                     .addFilterBefore(authenticationFilter(), AnonymousAuthenticationFilter.class)
                     .authorizeRequests()
                     //.requestMatchers(PROTECTED_URLS)
-                    .antMatchers("/","/api/**")
+                    .antMatchers("/","/api/**","/slot")
                     .authenticated()
                     .and()
                     .csrf().disable()
@@ -99,6 +108,9 @@ public class SecurityConfig  {
 
         @Bean
         TokenAuthenticationFilter authenticationFilter() throws Exception {
+
+            LOGGER.log(Level.INFO, "inside authenticationFilter func.");
+
             final TokenAuthenticationFilter filter = new TokenAuthenticationFilter(PROTECTED_URLS);
             filter.setAuthenticationManager(authenticationManager());
             //filter.setAuthenticationSuccessHandler(successHandler());
@@ -107,6 +119,8 @@ public class SecurityConfig  {
 
         @Bean
         AuthenticationEntryPoint forbiddenEntryPoint() {
+
+            LOGGER.log(Level.INFO, "inside AuthenticationEntryPoint func.");
             return new HttpStatusEntryPoint(HttpStatus.FORBIDDEN);
         }
     }
